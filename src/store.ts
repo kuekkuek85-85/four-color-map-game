@@ -34,6 +34,32 @@ export function clearSession(): void {
 
 // ---- 유효성 검사 ----
 
+// ---- 색 슬롯(4개) 선택 유지 ----
+
+const SLOTS_KEY = 'fourcolor.slots';
+
+export function loadSlotIds(): string[] | null {
+  try {
+    const raw = localStorage.getItem(SLOTS_KEY);
+    if (!raw) return null;
+    const arr = JSON.parse(raw);
+    if (Array.isArray(arr) && arr.every((x) => typeof x === 'string')) return arr as string[];
+    return null;
+  } catch {
+    return null;
+  }
+}
+
+export function saveSlotIds(ids: string[]): void {
+  try {
+    localStorage.setItem(SLOTS_KEY, JSON.stringify(ids));
+  } catch {
+    /* 무시 */
+  }
+}
+
+// ---- 유효성 검사 ----
+
 export function validateStudentId(id: string): string | null {
   if (!/^\d{5}$/.test(id)) return '학번은 숫자 5자리여야 해요.';
   return null;

@@ -10,7 +10,7 @@ import {
   violatingNodes,
   type Coloring,
 } from '../lib/game';
-import { PALETTE } from '../lib/colors';
+import type { ColorChoice } from '../lib/colors';
 import MapView from './MapView';
 import Palette from './Palette';
 
@@ -23,6 +23,8 @@ export interface GameResult {
 
 interface Props {
   level: Level;
+  slots: ColorChoice[];
+  onChangeSlot: (index: number, colorId: string) => void;
   onComplete: (result: GameResult) => void;
   onBack: () => void;
 }
@@ -33,7 +35,7 @@ function emptyColoring(level: Level): Coloring {
   return c;
 }
 
-export default function Game({ level, onComplete, onBack }: Props) {
+export default function Game({ level, slots, onChangeSlot, onComplete, onBack }: Props) {
   const [coloring, setColoring] = useState<Coloring>(() => emptyColoring(level));
   const [history, setHistory] = useState<Coloring[]>([]);
   const [active, setActive] = useState(0);
@@ -120,7 +122,7 @@ export default function Game({ level, onComplete, onBack }: Props) {
     }
     setHintNode(h.nodeId);
     setActive(h.color);
-    setHintMsg(`반짝이는 영역을 ${PALETTE[h.color].n}번(${PALETTE[h.color].name})으로 칠해 보세요.`);
+    setHintMsg(`반짝이는 영역을 ${h.color + 1}번(${slots[h.color].name})으로 칠해 보세요.`);
   };
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
@@ -154,6 +156,7 @@ export default function Game({ level, onComplete, onBack }: Props) {
         <MapView
           level={level}
           coloring={coloring}
+          slots={slots}
           violating={violating}
           onPaint={paint}
           hintNode={hintNode}
@@ -162,7 +165,7 @@ export default function Game({ level, onComplete, onBack }: Props) {
 
       {hintMsg && <p className="game__hint" role="status">{hintMsg}</p>}
 
-      <Palette active={active} onPick={setActive} />
+      <Palette active={active} onPick={setActive} slots={slots} onChangeSlot={onChangeSlot} />
 
       <div className="game__actions">
         <button type="button" className="btn" onClick={undo} disabled={history.length === 0}>

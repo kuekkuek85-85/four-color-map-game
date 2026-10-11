@@ -1,6 +1,8 @@
 import type { Level } from '../types';
 import { buildFromRects, buildWheel, type RectRegion } from '../lib/geometry';
+import { buildSlices, type Line } from '../lib/slice';
 import { chromaticNumber } from '../lib/game';
+import { KOREA_NODES, KOREA_VIEWBOX } from './koreaMap';
 
 // 레벨(지도) 정의.
 // 인접 간선은 도형 데이터에서 자동으로 계산하고(geometry),
@@ -27,7 +29,7 @@ const l1 = (() => {
     id: 'l1-intro-4',
     title: '입문 · 네 조각',
     difficulty: 1,
-    blurb: '가장 단순한 지도. 두 가지 색이면 충분해요.',
+    blurb: '네 조각으로 이루어진 가장 단순한 지도예요. 가볍게 시작해 보세요.',
     nodes,
     edges,
     viewBox: { w: 360, h: 360 },
@@ -47,7 +49,7 @@ const l2 = (() => {
     id: 'l2-wheel-5',
     title: '입문 · 바람개비',
     difficulty: 1,
-    blurb: '가운데와 바깥 조각들. 세 가지 색으로 칠할 수 있어요.',
+    blurb: '가운데를 바깥 조각들이 빙 둘러싼 지도예요.',
     nodes,
     edges,
     viewBox: { w: 360, h: 360 },
@@ -67,7 +69,7 @@ const l3 = (() => {
     id: 'l3-wheel-8',
     title: '기본 · 일곱 꽃잎',
     difficulty: 2,
-    blurb: '홀수 고리는 네 가지 색이 모두 필요해요.',
+    blurb: '가운데를 둘러싼 일곱 조각. 차근차근 색을 맞춰 보세요.',
     nodes,
     edges,
     viewBox: { w: 360, h: 360 },
@@ -95,45 +97,95 @@ const l4 = (() => {
   });
 })();
 
-// ---- 레벨 5: 도전 — 대한민국(단순화한 타일 지도) ----
+// ---- 레벨 5: 도전 — 대한민국(실제 시·도 지도) ----
+// 지도 모양은 KOSTAT 시·도 경계에서 생성(src/data/koreaMap.ts).
+// 인접 관계는 실제 육지 경계를 맞댄 시·도끼리 정의한다(제주는 섬이라 이웃 없음).
 const l5 = (() => {
-  const C = 70; // 타일 한 칸
-  const cell = (col: number, row: number) => ({ x: col * C, y: row * C, w: C, h: C });
-
-  const regions: RectRegion[] = [
-    { id: 'gyeonggi', label: '경기', rects: [cell(1, 0), cell(2, 0), cell(2, 1)] },
-    { id: 'seoul', label: '서울', rects: [cell(1, 1)] },
-    { id: 'incheon', label: '인천', rects: [cell(0, 1)] },
-    { id: 'gangwon', label: '강원', rects: [cell(3, 0), cell(4, 0), cell(4, 1)] },
-    { id: 'chungbuk', label: '충북', rects: [cell(3, 1), cell(3, 2)] },
-    { id: 'chungnam', label: '충남', rects: [cell(0, 2), cell(1, 2)] },
-    { id: 'sejong', label: '세종', rects: [cell(2, 2)] },
-    { id: 'daejeon', label: '대전', rects: [cell(2, 3)] },
-    { id: 'gyeongbuk', label: '경북', rects: [cell(4, 2), cell(4, 3)] },
-    { id: 'daegu', label: '대구', rects: [cell(3, 3)] },
-    { id: 'jeonbuk', label: '전북', rects: [cell(0, 3), cell(1, 3)] },
-    { id: 'jeonnam', label: '전남', rects: [cell(0, 4), cell(1, 4), cell(1, 5)] },
-    { id: 'gwangju', label: '광주', rects: [cell(0, 5)] },
-    { id: 'gyeongnam', label: '경남', rects: [cell(2, 4), cell(3, 4), cell(2, 5)] },
-    { id: 'ulsan', label: '울산', rects: [cell(4, 4)] },
-    { id: 'busan', label: '부산', rects: [cell(3, 5), cell(4, 5)] },
-    // 제주: 섬이라 육지와 인접하지 않음(바다로 떨어뜨려 배치)
-    { id: 'jeju', label: '제주', rects: [{ x: 70, y: 430, w: 120, h: 55 }] },
+  const edges: [string, string][] = [
+    ['seoul', 'gyeonggi'],
+    ['seoul', 'incheon'],
+    ['incheon', 'gyeonggi'],
+    ['gyeonggi', 'gangwon'],
+    ['gyeonggi', 'chungbuk'],
+    ['gyeonggi', 'chungnam'],
+    ['gangwon', 'chungbuk'],
+    ['gangwon', 'gyeongbuk'],
+    ['chungbuk', 'chungnam'],
+    ['chungbuk', 'sejong'],
+    ['chungbuk', 'daejeon'],
+    ['chungbuk', 'gyeongbuk'],
+    ['chungbuk', 'jeonbuk'],
+    ['chungnam', 'sejong'],
+    ['chungnam', 'daejeon'],
+    ['chungnam', 'jeonbuk'],
+    ['sejong', 'daejeon'],
+    ['gyeongbuk', 'jeonbuk'],
+    ['gyeongbuk', 'gyeongnam'],
+    ['gyeongbuk', 'daegu'],
+    ['gyeongbuk', 'ulsan'],
+    ['daegu', 'gyeongnam'],
+    ['ulsan', 'gyeongnam'],
+    ['ulsan', 'busan'],
+    ['busan', 'gyeongnam'],
+    ['gyeongnam', 'jeonbuk'],
+    ['gyeongnam', 'jeonnam'],
+    ['jeonbuk', 'jeonnam'],
+    ['jeonnam', 'gwangju'],
   ];
-
-  const { nodes, edges } = buildFromRects(regions);
   return finalize({
     id: 'l5-korea',
     title: '도전 · 대한민국',
     difficulty: 3,
-    blurb: '단순화한 우리나라 시·도 지도. 제주는 섬이라 이웃이 없어요.',
-    nodes,
+    blurb: '실제 우리나라 시·도 지도예요. 제주는 섬이라 이웃이 없어요.',
+    nodes: KOREA_NODES,
     edges,
-    viewBox: { w: 360, h: 500 },
+    viewBox: KOREA_VIEWBOX,
   });
 })();
 
-export const LEVELS: Level[] = [l1, l2, l3, l4, l5];
+// ---- 레벨: 기본 — 조각보(직선으로 쪼갠 추상 지도) ----
+const lPatch = (() => {
+  const lines: Line[] = [
+    { x1: 0, y1: 110, x2: 320, y2: 70 },
+    { x1: 0, y1: 250, x2: 320, y2: 300 },
+    { x1: 100, y1: 0, x2: 150, y2: 400 },
+    { x1: 240, y1: 0, x2: 205, y2: 400 },
+    { x1: 0, y1: 20, x2: 320, y2: 360 },
+  ];
+  const { nodes, edges } = buildSlices(320, 400, lines);
+  return finalize({
+    id: 'l6-patch',
+    title: '기본 · 조각보',
+    difficulty: 2,
+    blurb: '직선으로 쪼갠 알록달록 조각보예요.',
+    nodes,
+    edges,
+    viewBox: { w: 320, h: 400 },
+  });
+})();
+
+// ---- 레벨: 도전 — 만다라(여러 겹의 방사형 조각, 4색 필요) ----
+const lMandala = (() => {
+  const { nodes, edges } = buildWheel({
+    cx: 180,
+    cy: 180,
+    r0: 30,
+    radii: [72, 122, 172],
+    counts: [5, 10, 15],
+    offsets: [0, 18, 12],
+  });
+  return finalize({
+    id: 'l7-mandala',
+    title: '도전 · 만다라',
+    difficulty: 3,
+    blurb: '여러 겹의 조각이 빙 둘러싼 만다라예요. 조각이 많아요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+export const LEVELS: Level[] = [l1, l2, l3, l4, lPatch, l5, lMandala];
 
 export function getLevel(id: string): Level | undefined {
   return LEVELS.find((l) => l.id === id);
