@@ -4,7 +4,6 @@ import {
   adjacency,
   allColored,
   colorsUsed,
-  findHint,
   findViolations,
   isComplete,
   violatingNodes,
@@ -37,12 +36,8 @@ function emptyColoring(level: Level): Coloring {
 
 export default function Game({ level, slots, onChangeSlot, onComplete, onBack }: Props) {
   const [coloring, setColoring] = useState<Coloring>(() => emptyColoring(level));
-  const [history, setHistory] = useState<Coloring[]>([]);
   const [active, setActive] = useState(0);
   const [violations, setViolations] = useState(0);
-  const [undos, setUndos] = useState(0);
-  const [hintNode, setHintNode] = useState<string | null>(null);
-  const [hintMsg, setHintMsg] = useState<string | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [done, setDone] = useState(false);
 
@@ -68,20 +63,15 @@ export default function Game({ level, slots, onChangeSlot, onComplete, onBack }:
         durationSec,
         colorsUsed: colorsUsed(coloring),
         violations,
-        undos,
+        undos: 0,
       });
     }
-  }, [coloring, done, level, onComplete, violations, undos]);
-
-  const pushHistory = (c: Coloring) => setHistory((h) => [...h, c]);
+  }, [coloring, done, level, onComplete, violations]);
 
   const paint = (nodeId: string) => {
     if (done) return;
-    setHintNode(null);
-    setHintMsg(null);
     const current = coloring[nodeId];
     const next = current === active ? null : active;
-    pushHistory({ ...coloring });
     const updated = { ...coloring, [nodeId]: next };
     setColoring(updated);
     // 위반(틀린 선택) 집계: 새로 칠한 색이 이웃과 같으면 1회 증가
@@ -91,38 +81,9 @@ export default function Game({ level, slots, onChangeSlot, onComplete, onBack }:
     }
   };
 
-  const undo = () => {
-    if (done) return;
-    setHistory((h) => {
-      if (h.length === 0) return h;
-      const prev = h[h.length - 1];
-      setColoring(prev);
-      setUndos((u) => u + 1);
-      return h.slice(0, -1);
-    });
-    setHintNode(null);
-    setHintMsg(null);
-  };
-
   const reset = () => {
     if (done) return;
-    pushHistory({ ...coloring });
     setColoring(emptyColoring(level));
-    setHintNode(null);
-    setHintMsg(null);
-  };
-
-  const hint = () => {
-    if (done) return;
-    const h = findHint(level, coloring);
-    if (!h) {
-      setHintMsg('지금은 도와줄 수 있는 한 수가 없어요. 되돌리기로 한두 칸을 지워 보세요.');
-      setHintNode(null);
-      return;
-    }
-    setHintNode(h.nodeId);
-    setActive(h.color);
-    setHintMsg(`반짝이는 영역을 ${h.color + 1}번(${slots[h.color].name})으로 칠해 보세요.`);
   };
 
   const mm = String(Math.floor(elapsed / 60)).padStart(2, '0');
@@ -159,23 +120,14 @@ export default function Game({ level, slots, onChangeSlot, onComplete, onBack }:
           slots={slots}
           violating={violating}
           onPaint={paint}
-          hintNode={hintNode}
         />
       </div>
-
-      {hintMsg && <p className="game__hint" role="status">{hintMsg}</p>}
 
       <Palette active={active} onPick={setActive} slots={slots} onChangeSlot={onChangeSlot} />
 
       <div className="game__actions">
-        <button type="button" className="btn" onClick={undo} disabled={history.length === 0}>
-          ↩ 되돌리기
-        </button>
         <button type="button" className="btn" onClick={reset}>
-          ⟳ 초기화
-        </button>
-        <button type="button" className="btn btn--accent" onClick={hint}>
-          💡 힌트
+          ⟳ 처음부터
         </button>
       </div>
 
