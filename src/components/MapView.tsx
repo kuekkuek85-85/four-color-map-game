@@ -57,28 +57,16 @@ export default function MapView({ level, coloring, slots, violating, onPaint, hi
             {node.shapes.map((d, i) => (
               <path key={i} d={d} fill={fill} className="region__path" />
             ))}
-            {/* 색 번호(색각 이상 대응) */}
+            {/* 색 번호(색각 이상 대응). 지역명 등 글자는 지도에 표시하지 않는다. */}
             {paint && (
               <text
                 x={node.centroid.x}
-                y={node.centroid.y + (label ? -2 : 6)}
+                y={node.centroid.y + 6}
                 className="region__num"
                 fill={ink}
                 textAnchor="middle"
               >
                 {num}
-              </text>
-            )}
-            {/* 실제 지도 레벨의 지역명 */}
-            {label && (
-              <text
-                x={node.centroid.x}
-                y={node.centroid.y + 16}
-                className="region__label"
-                fill={paint ? ink : '#55607a'}
-                textAnchor="middle"
-              >
-                {label}
               </text>
             )}
           </g>
