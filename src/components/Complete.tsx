@@ -59,10 +59,6 @@ export default function Complete({
             <dt>틀린 선택</dt>
             <dd>{result.violations}회</dd>
           </div>
-          <div className="result__row">
-            <dt>되돌리기</dt>
-            <dd>{result.undos}회</dd>
-          </div>
         </dl>
 
         <p className="complete__save" role="status">
