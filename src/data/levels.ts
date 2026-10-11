@@ -1,5 +1,6 @@
 import type { Level } from '../types';
 import { buildFromRects, buildWheel, type RectRegion } from '../lib/geometry';
+import { buildSlices, type Line } from '../lib/slice';
 import { chromaticNumber } from '../lib/game';
 import { KOREA_NODES, KOREA_VIEWBOX } from './koreaMap';
 
@@ -142,7 +143,49 @@ const l5 = (() => {
   });
 })();
 
-export const LEVELS: Level[] = [l1, l2, l3, l4, l5];
+// ---- 레벨: 기본 — 조각보(직선으로 쪼갠 추상 지도) ----
+const lPatch = (() => {
+  const lines: Line[] = [
+    { x1: 0, y1: 110, x2: 320, y2: 70 },
+    { x1: 0, y1: 250, x2: 320, y2: 300 },
+    { x1: 100, y1: 0, x2: 150, y2: 400 },
+    { x1: 240, y1: 0, x2: 205, y2: 400 },
+    { x1: 0, y1: 20, x2: 320, y2: 360 },
+  ];
+  const { nodes, edges } = buildSlices(320, 400, lines);
+  return finalize({
+    id: 'l6-patch',
+    title: '기본 · 조각보',
+    difficulty: 2,
+    blurb: '직선으로 쪼갠 알록달록 조각보예요.',
+    nodes,
+    edges,
+    viewBox: { w: 320, h: 400 },
+  });
+})();
+
+// ---- 레벨: 도전 — 만다라(여러 겹의 방사형 조각, 4색 필요) ----
+const lMandala = (() => {
+  const { nodes, edges } = buildWheel({
+    cx: 180,
+    cy: 180,
+    r0: 30,
+    radii: [72, 122, 172],
+    counts: [5, 10, 15],
+    offsets: [0, 18, 12],
+  });
+  return finalize({
+    id: 'l7-mandala',
+    title: '도전 · 만다라',
+    difficulty: 3,
+    blurb: '여러 겹의 조각이 빙 둘러싼 만다라예요. 조각이 많아요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+export const LEVELS: Level[] = [l1, l2, l3, l4, lPatch, l5, lMandala];
 
 export function getLevel(id: string): Level | undefined {
   return LEVELS.find((l) => l.id === id);
