@@ -34,42 +34,40 @@ npm run preview    # 빌드 결과 미리보기
 npm run validate:levels   # 레벨 데이터(인접·최소 색 수) 검증
 ```
 
-## Firebase 연결 (선택)
+## Firebase 연결
 
-환경변수가 **비어 있으면 앱은 자동으로 "오프라인 모드"로 동작**합니다. 기록은 브라우저
-`localStorage`에만 저장되며, 게임·레벨·내 기록·(해당 기기 한정) 교사 현황판은 그대로 동작합니다.
-설정 없이도 전체 흐름을 체험할 수 있습니다.
+이 앱은 `four-color-map-game` Firebase 프로젝트에 **기본 연결**되도록 설정되어 있습니다
+(`src/firebase.ts`의 기본 설정). Firebase 웹 설정값(apiKey 등)은 비밀이 아니라 공개용
+식별자이며, 실제 보호는 아래 **Firestore 보안 규칙**으로 합니다. 다른 프로젝트를 쓰려면
+`VITE_FIREBASE_*` 환경변수로 덮어쓸 수 있습니다(환경변수가 기본 설정보다 우선).
 
-반 전체 기록을 모으려면 Firebase를 연결하세요.
+> Firebase에 연결할 수 없는 환경(네트워크 차단 등)에서는 저장이 실패해도 게임은 그대로
+> 동작하고, 기록은 저장되지 않습니다.
 
-1. [Firebase 콘솔](https://console.firebase.google.com)에서 프로젝트를 만들고 **Firestore**를 활성화합니다.
-2. 웹 앱을 등록하고 설정 값을 복사합니다.
-3. `.env.example`을 `.env.local`로 복사한 뒤 값을 채웁니다.
+### 저장이 되게 하려면 — 보안 규칙 게시 (필수)
 
-   ```bash
-   cp .env.example .env.local
-   ```
+Firestore 데이터베이스가 만들어져 있어도 **보안 규칙을 게시하기 전에는 쓰기가 거부**되어
+("Missing or insufficient permissions") 기록이 저장되지 않습니다. 저장소의 `firestore.rules`
+내용을 게시하세요.
 
-   ```
-   VITE_FIREBASE_API_KEY=...
-   VITE_FIREBASE_AUTH_DOMAIN=...
-   VITE_FIREBASE_PROJECT_ID=...
-   VITE_FIREBASE_STORAGE_BUCKET=...
-   VITE_FIREBASE_MESSAGING_SENDER_ID=...
-   VITE_FIREBASE_APP_ID=...
-   ```
+- 가장 쉬운 방법: [Firebase 콘솔](https://console.firebase.google.com) → 프로젝트
+  `four-color-map-game` → **Firestore Database → 규칙(Rules)** 탭 → `firestore.rules`
+  내용을 붙여넣고 **게시(Publish)**.
+- 또는 Firebase CLI:
 
-4. `firestore.rules`의 보안 규칙을 배포합니다.
+  ```bash
+  firebase deploy --only firestore:rules
+  ```
 
-   ```bash
-   firebase deploy --only firestore:rules
-   ```
+Firestore 데이터베이스를 아직 만들지 않았다면 콘솔에서 **Firestore Database → 데이터베이스
+만들기**를 먼저 진행하세요.
 
 ## Vercel 배포
 
 1. 이 저장소를 GitHub에 올리고 Vercel 프로젝트로 가져옵니다.
 2. 프레임워크 프리셋은 **Vite**(자동 감지). 빌드 명령 `npm run build`, 출력 디렉터리 `dist`.
-3. Firebase를 쓸 경우 위 `VITE_FIREBASE_*` 값을 Vercel 환경변수에 등록합니다.
+3. Firebase는 기본 설정으로 연결되므로 환경변수 없이도 배포됩니다. 다른 프로젝트를
+   쓰려면 `VITE_FIREBASE_*` 값을 Vercel 환경변수에 등록해 덮어씁니다.
 4. `main` 브랜치 머지 시 자동 배포, PR마다 미리보기 URL이 생성됩니다.
 
 ## 데이터 모델 (Firestore)
