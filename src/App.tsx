@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Level, PlayRecord, Student } from './types';
 import { LEVELS } from './data/levels';
-import { clearSession, loadSession, saveSession } from './store';
+import { clearSession, loadSession, saveSession, loadSlotIds, saveSlotIds } from './store';
+import { DEFAULT_SLOT_IDS, slotsFromIds } from './lib/colors';
 import { fetchPlaysByStudent, savePlay, upsertStudent } from './repo/records';
 import Login from './components/Login';
 import LevelSelect from './components/LevelSelect';
@@ -23,6 +24,19 @@ export default function App() {
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [isBest, setIsBest] = useState(false);
+
+  // 4개 색 슬롯(학생이 각 슬롯의 색을 고를 수 있음). 기기에 유지.
+  const [slotIds, setSlotIds] = useState<string[]>(() => loadSlotIds() ?? DEFAULT_SLOT_IDS);
+  const slots = useMemo(() => slotsFromIds(slotIds), [slotIds]);
+
+  const changeSlot = (index: number, colorId: string) => {
+    setSlotIds((prev) => {
+      const next = [...prev];
+      next[index] = colorId;
+      saveSlotIds(next);
+      return next;
+    });
+  };
 
   // 세션 복원(재접속 연속성)
   useEffect(() => {
@@ -133,6 +147,8 @@ export default function App() {
         <Game
           key={gameKey}
           level={currentLevel}
+          slots={slots}
+          onChangeSlot={changeSlot}
           onComplete={handleComplete}
           onBack={() => setScreen('levels')}
         />

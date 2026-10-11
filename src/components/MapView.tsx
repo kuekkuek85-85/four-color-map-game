@@ -1,17 +1,19 @@
 import type { Level } from '../types';
 import type { Coloring } from '../lib/game';
-import { PALETTE, EMPTY_FILL, EMPTY_INK } from '../lib/colors';
+import { EMPTY_FILL, EMPTY_INK, type ColorChoice } from '../lib/colors';
 
 interface Props {
   level: Level;
   coloring: Coloring;
+  /** 4개 슬롯에 들어 있는 색 */
+  slots: ColorChoice[];
   violating: Set<string>;
   onPaint: (nodeId: string) => void;
   /** 힌트로 깜빡일 영역 id */
   hintNode?: string | null;
 }
 
-export default function MapView({ level, coloring, violating, onPaint, hintNode }: Props) {
+export default function MapView({ level, coloring, slots, violating, onPaint, hintNode }: Props) {
   const { w, h } = level.viewBox;
   return (
     <svg
@@ -23,7 +25,8 @@ export default function MapView({ level, coloring, violating, onPaint, hintNode 
     >
       {level.nodes.map((node) => {
         const c = coloring[node.id];
-        const paint = c != null ? PALETTE[c] : null;
+        const paint = c != null ? slots[c] : null;
+        const num = c != null ? c + 1 : null;
         const fill = paint ? paint.fill : EMPTY_FILL;
         const ink = paint ? paint.ink : EMPTY_INK;
         const isBad = violating.has(node.id);
@@ -41,7 +44,7 @@ export default function MapView({ level, coloring, violating, onPaint, hintNode 
             tabIndex={0}
             aria-label={
               `영역 ${label ?? node.id}` +
-              (paint ? `, ${paint.n}번 ${paint.name}` : ', 비어 있음') +
+              (paint ? `, ${num}번 ${paint.name}` : ', 비어 있음') +
               (isBad ? ', 이웃과 같은 색 — 고쳐야 해요' : '')
             }
             onKeyDown={(e) => {
@@ -63,7 +66,7 @@ export default function MapView({ level, coloring, violating, onPaint, hintNode 
                 fill={ink}
                 textAnchor="middle"
               >
-                {paint.n}
+                {num}
               </text>
             )}
             {/* 실제 지도 레벨의 지역명 */}

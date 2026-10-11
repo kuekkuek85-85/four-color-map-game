@@ -434,6 +434,9 @@ body {
   gap: 12px;
   justify-content: center;
 }
+.slot {
+  position: relative;
+}
 .swatch {
   width: 64px;
   height: 64px;
@@ -449,6 +452,87 @@ body {
   transform: translateY(-4px) scale(1.06);
   outline: 4px solid var(--ink);
   outline-offset: 2px;
+}
+/* 색 바꾸기 배지 */
+.slot__edit {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--card);
+  background: var(--ink);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  padding: 0;
+}
+.slot--active .slot__edit {
+  transform: translateY(-4px);
+}
+/* 색 고르기 팝오버 */
+.picker {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px rgba(27, 36, 64, 0.22);
+  padding: 12px;
+  z-index: 20;
+  width: max-content;
+  max-width: min(92vw, 300px);
+}
+.picker::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 8px solid transparent;
+  border-top-color: var(--card);
+}
+.picker__title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+  text-align: center;
+}
+.picker__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+.picker__swatch {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 2px solid rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transition: transform 0.06s ease;
+}
+.picker__swatch:hover {
+  transform: scale(1.1);
+}
+.picker__swatch--sel {
+  outline: 3px solid var(--ink);
+  outline-offset: 1px;
+}
+.picker__swatch--used {
+  opacity: 0.4;
 }
 .game__actions {
   display: flex;
