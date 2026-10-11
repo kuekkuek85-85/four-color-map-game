@@ -185,7 +185,81 @@ const lMandala = (() => {
   });
 })();
 
-export const LEVELS: Level[] = [l1, l2, l3, l4, lPatch, l5, lMandala];
+// ---- 레벨: 도전 — 아홉 조각 바퀴(가운데 + 홀수 9조각, 4색 필요) ----
+const lStar = (() => {
+  const { nodes, edges } = buildWheel({
+    cx: 180,
+    cy: 180,
+    r0: 62,
+    radii: [162],
+    counts: [9],
+  });
+  return finalize({
+    id: 'l8-star',
+    title: '도전 · 아홉 조각',
+    difficulty: 3,
+    blurb: '가운데를 아홉 조각이 빙 둘러쌌어요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+// ---- 레벨: 도전 — 톱니바퀴(안팎 9조각이 엇갈림, 4색 필요) ----
+const lGear = (() => {
+  const { nodes, edges } = buildWheel({
+    cx: 180,
+    cy: 180,
+    r0: 40,
+    radii: [110, 172],
+    counts: [9, 9],
+    offsets: [0, 20],
+  });
+  return finalize({
+    id: 'l9-gear',
+    title: '도전 · 톱니바퀴',
+    difficulty: 3,
+    blurb: '안팎 톱니가 맞물린 바퀴예요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+// ---- 레벨: 도전 — 해바라기(안쪽 9 + 바깥 18, 4색 필요) ----
+const lSun = (() => {
+  const { nodes, edges } = buildWheel({
+    cx: 180,
+    cy: 180,
+    r0: 34,
+    radii: [104, 172],
+    counts: [9, 18],
+    offsets: [0, 10],
+  });
+  return finalize({
+    id: 'l10-sun',
+    title: '도전 · 해바라기',
+    difficulty: 3,
+    blurb: '안쪽 꽃심을 바깥 꽃잎이 촘촘히 둘러쌌어요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+// 레벨 순서: 입문 → 기본 → 도전. 쉬운 것부터 차근차근.
+export const LEVELS: Level[] = [
+  l1,
+  l2,
+  lPatch,
+  l3,
+  l4,
+  lStar,
+  lGear,
+  l5,
+  lMandala,
+  lSun,
+];
 
 export function getLevel(id: string): Level | undefined {
   return LEVELS.find((l) => l.id === id);
