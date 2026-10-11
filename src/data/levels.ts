@@ -164,27 +164,6 @@ const lPatch = (() => {
   });
 })();
 
-// ---- 레벨: 도전 — 만다라(여러 겹의 방사형 조각, 4색 필요) ----
-const lMandala = (() => {
-  const { nodes, edges } = buildWheel({
-    cx: 180,
-    cy: 180,
-    r0: 30,
-    radii: [72, 122, 172],
-    counts: [5, 10, 15],
-    offsets: [0, 18, 12],
-  });
-  return finalize({
-    id: 'l7-mandala',
-    title: '도전 · 만다라',
-    difficulty: 3,
-    blurb: '여러 겹의 조각이 빙 둘러싼 만다라예요. 조각이 많아요.',
-    nodes,
-    edges,
-    viewBox: { w: 360, h: 360 },
-  });
-})();
-
 // ---- 레벨: 도전 — 아홉 조각 바퀴(가운데 + 홀수 9조각, 4색 필요) ----
 const lStar = (() => {
   const { nodes, edges } = buildWheel({
@@ -205,42 +184,76 @@ const lStar = (() => {
   });
 })();
 
-// ---- 레벨: 도전 — 톱니바퀴(안팎 9조각이 엇갈림, 4색 필요) ----
-const lGear = (() => {
-  const { nodes, edges } = buildWheel({
-    cx: 180,
-    cy: 180,
-    r0: 40,
-    radii: [110, 172],
-    counts: [9, 9],
-    offsets: [0, 20],
-  });
+// 몬드리안풍 네모 블록 지도. 각 레이아웃에 "가운데 + 홀수 5조각 순환"(W5)
+// 구조를 넣어 4색이 꼭 필요하도록 했다. 영역은 직사각형(일부는 ㄱ자 2조각).
+const R = (x: number, y: number, w: number, h: number) => ({ x, y, w, h });
+
+// ---- 레벨: 도전 — 네모 블록(몬드리안풍, 4색 필요) ----
+const lBlock = (() => {
+  const regions: RectRegion[] = [
+    { id: 'a', rects: [R(0, 0, 200, 120)] },
+    { id: 'b', rects: [R(200, 0, 160, 120)] },
+    { id: 'c', rects: [R(0, 120, 120, 120)] },
+    { id: 'd', rects: [R(120, 120, 120, 120)] }, // 가운데
+    { id: 'e', rects: [R(240, 120, 120, 240)] },
+    { id: 'f', rects: [R(0, 240, 240, 120)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
   return finalize({
-    id: 'l9-gear',
-    title: '도전 · 톱니바퀴',
+    id: 'l9-block',
+    title: '도전 · 네모 블록',
     difficulty: 3,
-    blurb: '안팎 톱니가 맞물린 바퀴예요.',
+    blurb: '크고 작은 네모 블록을 규칙에 맞게 칠해 보세요.',
     nodes,
     edges,
     viewBox: { w: 360, h: 360 },
   });
 })();
 
-// ---- 레벨: 도전 — 해바라기(안쪽 9 + 바깥 18, 4색 필요) ----
-const lSun = (() => {
-  const { nodes, edges } = buildWheel({
-    cx: 180,
-    cy: 180,
-    r0: 34,
-    radii: [104, 172],
-    counts: [9, 18],
-    offsets: [0, 10],
-  });
+// ---- 레벨: 도전 — 몬드리안(세로형 네모 구성, 4색 필요) ----
+const lMondrian = (() => {
+  // lBlock 을 전치(가로↔세로)해 다른 모양이면서 같은 4색 구조를 유지.
+  const regions: RectRegion[] = [
+    { id: 'a', rects: [R(0, 0, 120, 200)] },
+    { id: 'b', rects: [R(0, 200, 120, 160)] },
+    { id: 'c', rects: [R(120, 0, 120, 120)] },
+    { id: 'd', rects: [R(120, 120, 120, 120)] }, // 가운데
+    { id: 'e', rects: [R(120, 240, 240, 120)] },
+    { id: 'f', rects: [R(240, 0, 120, 240)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
   return finalize({
-    id: 'l10-sun',
-    title: '도전 · 해바라기',
+    id: 'l10-mondrian',
+    title: '도전 · 몬드리안',
     difficulty: 3,
-    blurb: '안쪽 꽃심을 바깥 꽃잎이 촘촘히 둘러쌌어요.',
+    blurb: '몬드리안 그림처럼 네모로 나뉜 지도예요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+// ---- 레벨: 도전 — 색종이 벽(네모가 많은 몬드리안, 4색 필요) ----
+const lWall = (() => {
+  // 좌상단에 4색 코어(W5), 우측열·하단행을 더해 조각을 늘렸다.
+  const regions: RectRegion[] = [
+    { id: 'a', rects: [R(0, 0, 150, 90)] },
+    { id: 'b', rects: [R(150, 0, 90, 90)] },
+    { id: 'c', rects: [R(0, 90, 90, 90)] },
+    { id: 'd', rects: [R(90, 90, 90, 90)] }, // 가운데
+    { id: 'e', rects: [R(180, 90, 90, 180)] },
+    { id: 'f', rects: [R(0, 180, 180, 90)] },
+    { id: 'g', rects: [R(240, 0, 120, 90)] },
+    { id: 'h', rects: [R(270, 90, 90, 180)] },
+    { id: 'i', rects: [R(0, 270, 150, 90)] },
+    { id: 'j', rects: [R(150, 270, 210, 90)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
+  return finalize({
+    id: 'l7-wall',
+    title: '도전 · 색종이 벽',
+    difficulty: 3,
+    blurb: '여러 네모가 맞물린 색종이 벽이에요.',
     nodes,
     edges,
     viewBox: { w: 360, h: 360 },
@@ -255,10 +268,10 @@ export const LEVELS: Level[] = [
   l3,
   l4,
   lStar,
-  lGear,
+  lWall, // 미션 7 (몬드리안풍)
   l5,
-  lMandala,
-  lSun,
+  lBlock, // 미션 9 (몬드리안풍)
+  lMondrian, // 미션 10 (몬드리안풍)
 ];
 
 export function getLevel(id: string): Level | undefined {
