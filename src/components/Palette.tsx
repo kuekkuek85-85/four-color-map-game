@@ -37,6 +37,8 @@ export default function Palette({ slots, active, onPick, onChangeSlot }: Props) 
     };
   }, [openIndex]);
 
+  const openColor = openIndex !== null ? slots[openIndex] : null;
+
   return (
     <div className="palette" ref={wrapRef} role="group" aria-label="색 팔레트">
       {slots.map((c, i) => {
@@ -64,43 +66,44 @@ export default function Palette({ slots, active, onPick, onChangeSlot }: Props) 
             >
               ✎
             </button>
-
-            {isOpen && (
-              <div className="picker" role="menu" aria-label={`${n}번 색 고르기`}>
-                <div className="picker__title">{n}번 색 고르기</div>
-                <div className="picker__grid">
-                  {COLOR_CHOICES.map((choice) => {
-                    const usedElsewhere = slots.some((s, si) => si !== i && s.id === choice.id);
-                    const selected = c.id === choice.id;
-                    return (
-                      <button
-                        key={choice.id}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={selected}
-                        aria-label={choice.name + (usedElsewhere ? ' (다른 번호가 사용 중)' : '')}
-                        title={choice.name + (usedElsewhere ? ' (다른 번호 사용 중)' : '')}
-                        className={
-                          'picker__swatch' +
-                          (selected ? ' picker__swatch--sel' : '') +
-                          (usedElsewhere ? ' picker__swatch--used' : '')
-                        }
-                        style={{ background: choice.fill, color: choice.ink }}
-                        onClick={() => {
-                          onChangeSlot(i, choice.id);
-                          setOpenIndex(null);
-                        }}
-                      >
-                        {usedElsewhere ? '·' : selected ? '✓' : ''}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         );
       })}
+
+      {/* 색 고르기 팝오버 — 어느 슬롯을 눌러도 화면 중앙 위에 띄워 잘리지 않게 한다. */}
+      {openIndex !== null && openColor && (
+        <div className="picker" role="menu" aria-label={`${openIndex + 1}번 색 고르기`}>
+          <div className="picker__title">{openIndex + 1}번 색 고르기</div>
+          <div className="picker__grid">
+            {COLOR_CHOICES.map((choice) => {
+              const usedElsewhere = slots.some((s, si) => si !== openIndex && s.id === choice.id);
+              const selected = openColor.id === choice.id;
+              return (
+                <button
+                  key={choice.id}
+                  type="button"
+                  role="menuitemradio"
+                  aria-checked={selected}
+                  aria-label={choice.name + (usedElsewhere ? ' (다른 번호가 사용 중)' : '')}
+                  title={choice.name + (usedElsewhere ? ' (다른 번호 사용 중)' : '')}
+                  className={
+                    'picker__swatch' +
+                    (selected ? ' picker__swatch--sel' : '') +
+                    (usedElsewhere ? ' picker__swatch--used' : '')
+                  }
+                  style={{ background: choice.fill, color: choice.ink }}
+                  onClick={() => {
+                    onChangeSlot(openIndex, choice.id);
+                    setOpenIndex(null);
+                  }}
+                >
+                  {usedElsewhere ? '·' : selected ? '✓' : ''}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

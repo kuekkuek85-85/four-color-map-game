@@ -437,6 +437,7 @@ body {
   display: flex;
   gap: 12px;
   justify-content: center;
+  position: relative;
 }
 .slot {
   position: relative;
