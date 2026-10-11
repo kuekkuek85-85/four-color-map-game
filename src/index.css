@@ -398,10 +398,14 @@ body {
   dominant-baseline: middle;
 }
 .region__label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   pointer-events: none;
   dominant-baseline: middle;
+  paint-order: stroke;
+  stroke: #ffffff;
+  stroke-width: 2.4px;
+  stroke-linejoin: round;
 }
 .region--bad .region__path {
   stroke: var(--warn);
