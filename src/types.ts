@@ -8,6 +8,11 @@ export interface MapNode {
   label?: string;
   /** SVG path `d` 조각들. 하나의 영역이 여러 조각(멀티 폴리곤)일 수 있다. */
   shapes: string[];
+  /**
+   * 외곽선 전용 path(선택). 여러 사각형으로 된 영역에서 내부 경계선을 없애고
+   * 바깥 테두리만 그릴 때 사용한다. 없으면 shapes 를 그대로 테두리로 쓴다.
+   */
+  outline?: string;
   /** 라벨/번호를 표시할 중심 좌표 */
   centroid: { x: number; y: number };
 }

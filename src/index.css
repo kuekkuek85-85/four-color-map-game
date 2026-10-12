@@ -376,18 +376,22 @@ body {
   cursor: pointer;
   outline: none;
 }
-.region__path {
+.region__fill {
+  stroke: none;
+  transition: fill 0.12s ease;
+}
+.region__stroke {
   stroke: #2a3350;
   stroke-width: 2.2;
   stroke-linejoin: round;
-  transition: fill 0.12s ease;
+  pointer-events: none;
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .region__path {
+  :root:not([data-theme='light']) .region__stroke {
     stroke: #0d1430;
   }
 }
-.region:focus-visible .region__path {
+.region:focus-visible .region__stroke {
   stroke: var(--primary);
   stroke-width: 3.5;
 }
@@ -407,13 +411,13 @@ body {
   stroke-width: 2.4px;
   stroke-linejoin: round;
 }
-.region--bad .region__path {
+.region--bad .region__stroke {
   stroke: var(--warn);
   stroke-width: 4;
   stroke-dasharray: 7 4;
   animation: shake 0.4s ease;
 }
-.region--hint .region__path {
+.region--hint .region__stroke {
   stroke: var(--accent);
   stroke-width: 4;
   animation: pulse 0.9s ease infinite;
@@ -427,8 +431,8 @@ body {
   50% { opacity: 0.45; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .region--bad .region__path,
-  .region--hint .region__path {
+  .region--bad .region__stroke,
+  .region--hint .region__stroke {
     animation: none;
   }
 }
