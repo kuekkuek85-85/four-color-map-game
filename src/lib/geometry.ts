@@ -69,6 +69,32 @@ function centroidOf(rects: Rect[]): { x: number; y: number } {
   return { x: best.x + best.w / 2, y: best.y + best.h / 2 };
 }
 
+/**
+ * 여러 사각형의 합집합 외곽선(내부 공유 변 제외)을 path 로 만든다.
+ * 단위 격자의 각 셀을 보고, 바깥을 향한 변만 남긴다.
+ */
+function rectsOutline(rects: Rect[]): string {
+  const xs = Array.from(new Set(rects.flatMap((r) => [r.x, r.x + r.w]))).sort((a, b) => a - b);
+  const ys = Array.from(new Set(rects.flatMap((r) => [r.y, r.y + r.h]))).sort((a, b) => a - b);
+  const r = (n: number) => Math.round(n * 10) / 10;
+  const inNode = (cx: number, cy: number) =>
+    rects.some((rc) => cx > rc.x && cx < rc.x + rc.w && cy > rc.y && cy < rc.y + rc.h);
+  let d = '';
+  for (let i = 0; i < xs.length - 1; i++) {
+    for (let j = 0; j < ys.length - 1; j++) {
+      const x0 = xs[i], x1 = xs[i + 1], y0 = ys[j], y1 = ys[j + 1];
+      const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+      if (!inNode(cx, cy)) continue;
+      const wdt = x1 - x0, hgt = y1 - y0;
+      if (!inNode(cx - wdt, cy)) d += `M${r(x0)},${r(y0)}L${r(x0)},${r(y1)}`;
+      if (!inNode(cx + wdt, cy)) d += `M${r(x1)},${r(y0)}L${r(x1)},${r(y1)}`;
+      if (!inNode(cx, cy - hgt)) d += `M${r(x0)},${r(y0)}L${r(x1)},${r(y0)}`;
+      if (!inNode(cx, cy + hgt)) d += `M${r(x0)},${r(y1)}L${r(x1)},${r(y1)}`;
+    }
+  }
+  return d;
+}
+
 /** 사각형 영역 목록으로부터 노드 + (자동 계산된) 인접 간선을 만든다. */
 export function buildFromRects(regions: RectRegion[]): {
   nodes: MapNode[];
@@ -78,6 +104,7 @@ export function buildFromRects(regions: RectRegion[]): {
     id: r.id,
     label: r.label,
     shapes: r.rects.map(rectPath),
+    outline: r.rects.length > 1 ? rectsOutline(r.rects) : undefined,
     centroid: centroidOf(r.rects),
   }));
 

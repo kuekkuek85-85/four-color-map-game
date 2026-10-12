@@ -54,9 +54,16 @@ export default function MapView({ level, coloring, slots, violating, onPaint, hi
               }
             }}
           >
+            {/* 채우기: 각 조각(겹쳐도 같은 색). 테두리는 아래 외곽선으로만 그린다. */}
             {node.shapes.map((d, i) => (
-              <path key={i} d={d} fill={fill} className="region__path" />
+              <path key={i} d={d} fill={fill} className="region__fill" />
             ))}
+            {/* 테두리: 외곽선이 있으면 내부 경계선 없이 바깥만, 없으면 조각 그대로. */}
+            <path
+              d={node.outline ?? node.shapes.join(' ')}
+              fill="none"
+              className="region__stroke"
+            />
             {/* 색 번호(색각 이상 대응). 지역명 등 글자는 지도에 표시하지 않는다. */}
             {paint && (
               <text
