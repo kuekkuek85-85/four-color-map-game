@@ -5,6 +5,7 @@ import { fetchAllPlays, storageMode } from '../repo/records';
 
 interface Props {
   onBack: () => void;
+  onLeaderboard: () => void;
 }
 
 function fmtTime(sec: number): string {
@@ -18,7 +19,7 @@ function avg(nums: number[]): number {
   return Math.round(nums.reduce((a, b) => a + b, 0) / nums.length);
 }
 
-export default function TeacherDashboard({ onBack }: Props) {
+export default function TeacherDashboard({ onBack, onLeaderboard }: Props) {
   const [plays, setPlays] = useState<PlayRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [levelFilter, setLevelFilter] = useState<string>('all');
@@ -104,6 +105,9 @@ export default function TeacherDashboard({ onBack }: Props) {
           </p>
         </div>
         <div className="pagehead__actions">
+          <button type="button" className="btn btn--ghost" onClick={onLeaderboard}>
+            🏆 순위표
+          </button>
           <button type="button" className="btn btn--ghost" onClick={load}>
             ⟳ 새로고침
           </button>

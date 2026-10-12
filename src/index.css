@@ -731,3 +731,68 @@ body {
   color: var(--muted);
   padding: 12px 2px;
 }
+
+/* ---- 순위표(리더보드) ---- */
+.myrank {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #4c6ef5, #7048e8);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow);
+}
+.myrank__badge {
+  flex: none;
+  font-size: 20px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 12px;
+  padding: 8px 14px;
+}
+.myrank__text {
+  font-size: 15px;
+  line-height: 1.4;
+}
+.lb-search {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.lb-search .field__input {
+  flex: 1;
+}
+.lb-table th:first-child,
+.lb-table td:first-child {
+  width: 64px;
+}
+.lb-rank {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.lb-medal {
+  margin-right: 4px;
+}
+.lb-row--me {
+  background: #eef2ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .lb-row--me {
+    background: #26315c;
+  }
+}
+.lb-row--me td {
+  font-weight: 700;
+}
+.lb-me-tag {
+  display: inline-block;
+  margin-left: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #fff;
+  background: var(--primary);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
