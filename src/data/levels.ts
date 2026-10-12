@@ -272,9 +272,9 @@ export const LEVELS: Level[] = [
   l4, // 기본 · 두 겹 꽃 (4색)
   lStar, // 도전 · 아홉 조각 (4색)
   l5, // 도전 · 대한민국 (4색)
-  lWall, // 도전 · 색종이 벽 (느슨, 해 많음)
-  lBlock, // 도전 · 네모 블록 (빡빡, 가장 어려움)
-  lMondrian, // 도전 · 몬드리안 (빡빡, 가장 어려움)
+  lBlock, // 8 도전 · 네모 블록
+  lMondrian, // 9 도전 · 몬드리안 (ㄱ자 K4)
+  lWall, // 10 도전 · 색종이 벽 (조각 많아 가장 까다로움)
 ];
 
 export function getLevel(id: string): Level | undefined {
