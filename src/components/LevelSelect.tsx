@@ -6,6 +6,7 @@ interface Props {
   bestByLevel: Record<string, PlayRecord | undefined>;
   onPick: (level: Level) => void;
   onMyRecords: () => void;
+  onLeaderboard: () => void;
   onLogout: () => void;
 }
 
@@ -22,6 +23,7 @@ export default function LevelSelect({
   bestByLevel,
   onPick,
   onMyRecords,
+  onLeaderboard,
   onLogout,
 }: Props) {
   return (
@@ -34,6 +36,9 @@ export default function LevelSelect({
           </p>
         </div>
         <div className="pagehead__actions">
+          <button type="button" className="btn btn--ghost" onClick={onLeaderboard}>
+            🏆 순위표
+          </button>
           <button type="button" className="btn btn--ghost" onClick={onMyRecords}>
             🏅 내 기록
           </button>

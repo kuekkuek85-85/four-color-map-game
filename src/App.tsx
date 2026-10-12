@@ -10,8 +10,9 @@ import Game, { type GameResult } from './components/Game';
 import Complete from './components/Complete';
 import MyRecords from './components/MyRecords';
 import TeacherDashboard from './components/TeacherDashboard';
+import Leaderboard from './components/Leaderboard';
 
-type Screen = 'login' | 'levels' | 'game' | 'complete' | 'myrecords' | 'teacher';
+type Screen = 'login' | 'levels' | 'game' | 'complete' | 'myrecords' | 'teacher' | 'leaderboard';
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('login');
@@ -139,6 +140,7 @@ export default function App() {
           bestByLevel={bestByLevel}
           onPick={startLevel}
           onMyRecords={() => setScreen('myrecords')}
+          onLeaderboard={() => setScreen('leaderboard')}
           onLogout={handleLogout}
         />
       )}
@@ -173,7 +175,14 @@ export default function App() {
       )}
 
       {screen === 'teacher' && (
-        <TeacherDashboard onBack={() => setScreen(student ? 'levels' : 'login')} />
+        <TeacherDashboard
+          onBack={() => setScreen(student ? 'levels' : 'login')}
+          onLeaderboard={() => setScreen('leaderboard')}
+        />
+      )}
+
+      {screen === 'leaderboard' && (
+        <Leaderboard student={student} onBack={() => setScreen(student ? 'levels' : 'teacher')} />
       )}
     </div>
   );
