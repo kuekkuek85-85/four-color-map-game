@@ -260,6 +260,98 @@ const lWall = (() => {
   });
 })();
 
+// ---- 레벨 11·12·13: 도전 — 색종이 벽을 점점 더 복잡하게(모두 4색 필요) ----
+// ㄱ자 K4 코어를 넣어 4색을 보장하고, 조각 수를 12 → 15 → 18로 늘려 복잡도를 높인다.
+const lWall2 = (() => {
+  const regions: RectRegion[] = [
+    { id: 'x', rects: [R(0, 0, 240, 70)] },
+    { id: 'a', rects: [R(240, 0, 120, 70)] },
+    { id: 'w', rects: [R(90, 70, 100, 70)] },
+    { id: 'y', rects: [R(0, 70, 90, 70), R(0, 140, 210, 70)] },
+    { id: 'z', rects: [R(190, 70, 80, 140)] },
+    { id: 'b', rects: [R(270, 70, 90, 140)] },
+    { id: 'c', rects: [R(0, 210, 120, 70)] },
+    { id: 'd', rects: [R(120, 210, 130, 80)] },
+    { id: 'e', rects: [R(250, 210, 110, 80)] },
+    { id: 'f', rects: [R(0, 280, 120, 80)] },
+    { id: 'g', rects: [R(120, 290, 140, 70)] },
+    { id: 'h', rects: [R(260, 290, 100, 70)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
+  return finalize({
+    id: 'l11-wall2',
+    title: '도전 · 색종이 벽 II',
+    difficulty: 3,
+    blurb: '색종이 벽이 더 촘촘해졌어요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+const lWall3 = (() => {
+  const regions: RectRegion[] = [
+    { id: 'x', rects: [R(0, 0, 200, 60)] },
+    { id: 'a', rects: [R(200, 0, 100, 60)] },
+    { id: 'b', rects: [R(300, 0, 60, 130)] },
+    { id: 'w', rects: [R(80, 60, 90, 70)] },
+    { id: 'y', rects: [R(0, 60, 80, 70), R(0, 130, 180, 60)] },
+    { id: 'z', rects: [R(170, 60, 130, 70)] },
+    { id: 'c', rects: [R(180, 130, 120, 60)] },
+    { id: 'd', rects: [R(300, 130, 60, 110)] },
+    { id: 'e', rects: [R(0, 190, 110, 80)] },
+    { id: 'f', rects: [R(110, 190, 90, 80)] },
+    { id: 'g', rects: [R(200, 190, 100, 50)] },
+    { id: 'h', rects: [R(0, 270, 140, 90)] },
+    { id: 'i', rects: [R(140, 270, 110, 90)] },
+    { id: 'j', rects: [R(250, 240, 110, 70)] },
+    { id: 'k', rects: [R(250, 310, 110, 50)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
+  return finalize({
+    id: 'l12-wall3',
+    title: '도전 · 색종이 벽 III',
+    difficulty: 3,
+    blurb: '조각이 더 많은 색종이 벽이에요.',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
+const lWall4 = (() => {
+  const regions: RectRegion[] = [
+    { id: 'x', rects: [R(0, 0, 170, 55)] },
+    { id: 'a', rects: [R(170, 0, 110, 55)] },
+    { id: 'b', rects: [R(280, 0, 80, 120)] },
+    { id: 'w', rects: [R(70, 55, 90, 65)] },
+    { id: 'y', rects: [R(0, 55, 70, 65), R(0, 120, 175, 55)] },
+    { id: 'z', rects: [R(160, 55, 120, 65)] },
+    { id: 'c', rects: [R(160, 120, 120, 55)] },
+    { id: 'd', rects: [R(280, 120, 80, 100)] },
+    { id: 'e', rects: [R(0, 175, 100, 70)] },
+    { id: 'f', rects: [R(100, 175, 80, 70)] },
+    { id: 'g', rects: [R(180, 175, 100, 45)] },
+    { id: 'h', rects: [R(0, 245, 120, 55)] },
+    { id: 'i', rects: [R(120, 245, 90, 55)] },
+    { id: 'j', rects: [R(210, 220, 70, 80)] },
+    { id: 'k', rects: [R(0, 300, 120, 60)] },
+    { id: 'l', rects: [R(120, 300, 100, 60)] },
+    { id: 'm', rects: [R(220, 300, 140, 60)] },
+    { id: 'n', rects: [R(280, 220, 80, 80)] },
+  ];
+  const { nodes, edges } = buildFromRects(regions);
+  return finalize({
+    id: 'l13-wall4',
+    title: '도전 · 색종이 벽 IV',
+    difficulty: 3,
+    blurb: '가장 복잡한 색종이 벽, 끝판왕이에요!',
+    nodes,
+    edges,
+    viewBox: { w: 360, h: 360 },
+  });
+})();
+
 // 레벨 순서: 입문 → 기본 → 도전. 쉬운 것부터 차근차근.
 // 쉬운 것부터. 난이도는 "조각 수"가 아니라 "4색 해의 적음(제약의 빡빡함)"으로
 // 정렬한다. 색종이 벽은 조각은 많아도 해가 많아 느슨하고, 네모 블록·몬드리안은
@@ -274,7 +366,10 @@ export const LEVELS: Level[] = [
   l5, // 도전 · 대한민국 (4색)
   lBlock, // 8 도전 · 네모 블록
   lMondrian, // 9 도전 · 몬드리안 (ㄱ자 K4)
-  lWall, // 10 도전 · 색종이 벽 (조각 많아 가장 까다로움)
+  lWall, // 10 도전 · 색종이 벽
+  lWall2, // 11 도전 · 색종이 벽 II (12조각)
+  lWall3, // 12 도전 · 색종이 벽 III (15조각)
+  lWall4, // 13 도전 · 색종이 벽 IV (18조각)
 ];
 
 export function getLevel(id: string): Level | undefined {
